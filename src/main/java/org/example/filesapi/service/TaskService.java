@@ -28,8 +28,8 @@ public class TaskService {
     public Long runTask(CreateTaskCommand command) {
         Long taskId = taskRepository.generateId();
         Task task=new Task(taskId);
-        task.setTaskId(taskId);
         task.setStatus(TaskStatus.Running);
+        taskRepository.addTask(task);
         executorService.submit(() -> {
             try {
                 List<File> files=searchFilesWithExtension(command);
