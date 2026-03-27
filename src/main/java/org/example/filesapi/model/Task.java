@@ -10,9 +10,9 @@ import java.util.Objects;
 @Setter
 @Getter
 public class Task {
-    Long taskId;
-    TaskStatus status;
-    ArrayList<File> result;
+    private final long taskId;
+    private volatile TaskStatus status;
+    private volatile ArrayList<File> result;
     public Task(Long taskId) {
         this.taskId = taskId;
     }
@@ -26,6 +26,6 @@ public class Task {
 
     @Override
     public int hashCode() {
-        return Objects.hash(taskId, status, result);
+        return Objects.hash(taskId);
     }
 }
