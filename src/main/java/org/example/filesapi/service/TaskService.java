@@ -40,7 +40,7 @@ public class TaskService {
                 task.setStatus(TaskStatus.Completed);
             } catch (InterruptedException e) {
                 task.setStatus(TaskStatus.Failed);
-            } catch (Exception e) {  // <- to dodajesz
+            } catch (Exception e) {
                 task.setStatus(TaskStatus.Failed);
                 log.error("Task {} failed: {}", task.getTaskId(), e.getMessage());
             }
@@ -55,7 +55,7 @@ public class TaskService {
         // Lista folder
         // Try-with-resources !!!!!!!!!!!!!
         // Rekurencja
-        Path path = Paths.get(command.getSource());
+        Path path = Paths.get(command.getSource().toLowerCase());
         File root = path.toFile();
         if (!root.exists()) {
             throw new IllegalArgumentException("Directory does not exist: " + command.getSource());
@@ -69,8 +69,7 @@ public class TaskService {
         files.forEach(p -> log.info("File {} has been found", p));
 
         if (files.isEmpty()) {
-            throw new IllegalArgumentException("No such file or directory");
-        }
+            log.info("No files found with extension {} in directory {}", command.getExtension(), command.getSource());        }
         Thread.sleep(1000);
         return new ArrayList<>(files);
     }
@@ -83,7 +82,7 @@ public class TaskService {
         for (File file : files) {
             if (file.isDirectory()) {
                 result.addAll(showFiles(file,command)); // wchodzi głębiej
-            } else if (file.getName().toLowerCase().endsWith(command.getExtension())) {
+            } else if (file.getName().toLowerCase().endsWith(command.getExtension().toLowerCase())) {
                 result.add(file); // znalazł plik z właściwym rozszerzeniem
             }
         }
