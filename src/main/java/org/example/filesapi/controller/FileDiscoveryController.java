@@ -3,12 +3,13 @@ package org.example.filesapi.controller;
 import org.example.filesapi.model.CreateTaskCommand;
 import org.example.filesapi.model.Task;
 import org.example.filesapi.model.TaskStatus;
-import org.example.filesapi.repository.TaskRepository;
 import org.example.filesapi.service.TaskService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/apiFiles")
@@ -19,7 +20,7 @@ private static final Logger log = LoggerFactory.getLogger(FileDiscoveryControlle
 // https://www.baeldung.com/slf4j-with-log4j2-logback
 
 
-    public FileDiscoveryController(TaskService taskService, TaskRepository taskRepository) {
+    public FileDiscoveryController(TaskService taskService) {
         this.taskService = taskService;
     }
     @PostMapping("/find-files")
@@ -36,8 +37,8 @@ private static final Logger log = LoggerFactory.getLogger(FileDiscoveryControlle
         return ResponseEntity.ok(taskService.getTaskStatus(jobId));
     }
     @GetMapping("/find-files/result/{jobId}")
-    public ResponseEntity<Object> getTaskResult(@PathVariable("jobId")Long  jobId) {
+    public ResponseEntity<Object> getTaskResult(@PathVariable("jobId") UUID jobId) {
         if (taskService.getTask(jobId) == null) return ResponseEntity.notFound().build();
-        return ResponseEntity.ok(taskService.getTask(jobId).getResult());
+        return ResponseEntity.ok(taskService.getTask(jobId).getFilePaths());
     }
 }

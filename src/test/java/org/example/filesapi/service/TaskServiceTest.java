@@ -7,29 +7,54 @@ import org.example.filesapi.repository.TaskRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicLong;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.lenient;
 
+@ExtendWith(MockitoExtension.class)
 class TaskServiceTest {
-    private TaskService taskService;
+    @Mock
     private TaskRepository taskRepository;
+
+    private TaskService taskService;
     private CreateTaskCommand command;
+
+    private final Map<UUID, Task> db = new ConcurrentHashMap<java.util.UUID, Task>();
+    private final AtomicLong idGen = new AtomicLong(0);
 
     @BeforeEach
     void setUp() {
-        taskRepository = new TaskRepository();
         taskService = new TaskService(taskRepository, Executors.newFixedThreadPool(4));
         command = new CreateTaskCommand();
+        db.clear();
+        idGen.set(0);
 
+        lenient().when(taskRepository.save(any(Task.class))).thenAnswer(inv -> {
+            Task t = inv.getArgument(0);
+            if (t.getTaskId() == null);
+            db.put(t.getTaskId(), t);
+            return t;
+        });
+        lenient().when(taskRepository.findById(anyLong())).thenAnswer(inv ->
+                Optional.ofNullable(db.get(inv.<Long>getArgument(0))));
     }
 
     @Test
@@ -38,40 +63,37 @@ class TaskServiceTest {
         Files.createFile(tempDir.resolve("test1.txt"));
         Files.createFile(tempDir.resolve("test2.txt"));
         Files.createFile(tempDir.resolve("test3.txt"));
-        //when
+        // WHEN
         command.setSource(tempDir.toString());
         command.setExtension(".txt");
         List<File> result = taskService.searchFilesWithExtension(command);
-
-        //then
+        // THEN
         Assertions.assertEquals(3, result.size());
     }
 
     @Test
     void emptyFolder(@TempDir Path tempDir) throws InterruptedException {
-        //GIVEN
+        // GIVEN
         assertTrue(Files.exists(tempDir), "JUnit TempDir should exist");
-        //WHEN
+        // WHEN
         command.setSource(tempDir.toAbsolutePath().toString());
         command.setExtension(".txt");
         List<File> result = taskService.searchFilesWithExtension(command);
-        //THEN
+        // THEN
         Assertions.assertNotNull(result);
         Assertions.assertEquals(0, result.size());
     }
 
     @Test
     void wrongPath() throws InterruptedException {
-        //GIVEN
+        // GIVEN
         command.setSource("text.txt");
         command.setExtension("text.txt");
-        //THEN
+        // THEN
         IllegalArgumentException exception = Assertions.assertThrows(IllegalArgumentException.class, () -> {
             taskService.searchFilesWithExtension(command);
         });
         Assertions.assertTrue(exception.getMessage().contains("Directory does not exist"));
-
-
     }
 
     @Test
@@ -79,11 +101,11 @@ class TaskServiceTest {
         Files.createFile(tempDir.resolve("test1.TXT"));
         Files.createFile(tempDir.resolve("test2.TxT"));
         Files.createFile(tempDir.resolve("test3.Txt"));
-        //when
+        // WHEN
         command.setSource(tempDir.toString());
         command.setExtension(".Txt");
         List<File> result = taskService.searchFilesWithExtension(command);
-        //then
+        // THEN
         Assertions.assertEquals(3, result.size());
     }
 
@@ -99,52 +121,47 @@ class TaskServiceTest {
         // THEN
         Thread.sleep(1500);
 
-        Assertions.assertEquals(org.example.filesapi.model.TaskStatus.Completed, taskRepository.getById(taskId).getStatus());
-        Assertions.assertFalse(taskRepository.getById(taskId).getResult().isEmpty());
+        Task saved = db.get(taskId);
+        Assertions.assertNotNull(saved);
+        Assertions.assertEquals(TaskStatus.Completed, saved.getStatus());
+        Assertions.assertFalse(saved.getFilePaths().isEmpty());
     }
 
     @Test
     void shouldCreateTaskAndReturnStatus(@TempDir Path tempDir) throws InterruptedException {
-        //GIVEN
+        // GIVEN
         command.setSource(tempDir.toString());
         command.setExtension(".txt");
-
-        //WHEN
+        // WHEN
         long jobId = taskService.createTask(command);
-
-        //THEN
+        // THEN
         TaskStatus initialStatus = taskService.getTaskStatus(jobId);
         Assertions.assertEquals(TaskStatus.Running, initialStatus);
-
-        //WHEN
+        // WHEN
         Thread.sleep(1200);
-
-        //THEN
+        // THEN
         TaskStatus finalStatus = taskService.getTaskStatus(jobId);
         Assertions.assertEquals(TaskStatus.Completed, finalStatus);
     }
 
     @Test
     void shouldReturnTaskWhenItExists() {
-        //GIVEN
-        long jobId = taskRepository.generateId();
-        Task task = new Task(jobId);
-        taskRepository.addTask(task);
-
-        //WHEN
+        // GIVEN
+        Task task = new Task();
+        Task saved = taskRepository.save(task);
+        UUID jobId = saved.getTaskId();
+        // WHEN
         Task result = taskService.getTask(jobId);
-
-        //THEN
+        // THEN
         Assertions.assertNotNull(result);
         Assertions.assertEquals(jobId, result.getTaskId());
     }
 
     @Test
     void shouldThrowExceptionWhenTaskDoesNotExist() {
-        //GIVEN
-        Long nonExistentId = 999L;
-
-        //THEN
+        // GIVEN
+        UUID nonExistentId = UUID.randomUUID();
+        // THEN
         Assertions.assertThrows(java.util.NoSuchElementException.class, () -> {
             taskService.getTask(nonExistentId);
         });

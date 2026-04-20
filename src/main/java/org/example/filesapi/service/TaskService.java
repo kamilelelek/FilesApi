@@ -6,7 +6,6 @@ import org.example.filesapi.model.TaskStatus;
 import org.example.filesapi.repository.TaskRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -14,6 +13,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
+import java.util.stream.Collectors;
 
 @Service
 public class TaskService {
@@ -27,34 +27,32 @@ public class TaskService {
         this.executorService = executorService;
     }
 
-
     public Long runTask(CreateTaskCommand command) {
-        Long taskId = taskRepository.generateId();
-        Task task=new Task(taskId);
+        Task task = new Task();
         task.setStatus(TaskStatus.Running);
-        taskRepository.addTask(task);
+        Task savedTask = taskRepository.save(task);
         executorService.submit(() -> {
             try {
                 List<File> files = searchFilesWithExtension(command);
-                task.setResult(new ArrayList<>(files));
-                task.setStatus(TaskStatus.Completed);
+                savedTask.setFilePaths(files.stream()
+                        .map(File::getAbsolutePath)
+                        .collect(Collectors.toList()));
+                savedTask.setStatus(TaskStatus.Completed);
             } catch (InterruptedException e) {
-                task.setStatus(TaskStatus.Failed);
+                savedTask.setStatus(TaskStatus.Failed);
             } catch (Exception e) {
-                task.setStatus(TaskStatus.Failed);
-                log.error("Task {} failed: {}", task.getTaskId(), e.getMessage());
+                savedTask.setStatus(TaskStatus.Failed);
+                log.error("Task {} failed: {}", savedTask.getTaskId(), e.getMessage());
+            } finally {
+                taskRepository.save(savedTask);
             }
         });
-                return task.getTaskId();
+        return savedTask.getTaskId();
     }
-
 
     public List<File> searchFilesWithExtension(CreateTaskCommand command) throws InterruptedException {
         log.debug("Searching for files with the extension {}", command.getExtension());
 
-        // Lista folder
-        // Try-with-resources !!!!!!!!!!!!!
-        // Rekurencja
         Path path = Paths.get(command.getSource().toLowerCase());
         File root = path.toFile();
         if (!root.exists()) {
@@ -63,49 +61,46 @@ public class TaskService {
         if (!root.isDirectory()) {
             throw new IllegalArgumentException("Path is not a directory: " + command.getSource());
         }
-        File[] filesFromPath = root.listFiles();
-        assert filesFromPath != null;
         List<File> files = new ArrayList<>(showFiles(root, command));
         files.forEach(p -> log.info("File {} has been found", p));
 
         if (files.isEmpty()) {
-            log.info("No files found with extension {} in directory {}", command.getExtension(), command.getSource());        }
+            log.info("No files found with extension {} in directory {}", command.getExtension(), command.getSource());
+        }
         Thread.sleep(1000);
         return new ArrayList<>(files);
     }
+
     private Collection<? extends File> showFiles(File folder, CreateTaskCommand command) throws InterruptedException {
         List<File> result = new ArrayList<>();
-        File[] files= folder.listFiles();
+        File[] files = folder.listFiles();
 
         if (files == null) return result;
 
         for (File file : files) {
             if (file.isDirectory()) {
-                result.addAll(showFiles(file,command)); // wchodzi głębiej
+                result.addAll(showFiles(file, command));
             } else if (file.getName().toLowerCase().endsWith(command.getExtension().toLowerCase())) {
-                result.add(file); // znalazł plik z właściwym rozszerzeniem
+                result.add(file);
             }
         }
         return result;
     }
+
     public long createTask(CreateTaskCommand command) {
         Long jobId = runTask(command);
         log.info("Job ID: " + jobId);
-        return  jobId;
-    }
-    public TaskStatus getTaskStatus(Long jobId) {
-        Task task = taskRepository.getById(jobId);
-        if (task == null) {
-            throw new NoSuchElementException("Task not found: " + jobId);
-        }
-        return task.getStatus();
-    }
-    public Task getTask(Long jobId) {
-        Task task = taskRepository.getById(jobId);
-        if (task == null) {
-            throw new NoSuchElementException("Task not found: " + jobId);
-        }
-        return task;
+        return jobId;
     }
 
+    public TaskStatus getTaskStatus(Long jobId) {
+        Task task = taskRepository.findById(jobId)
+                .orElseThrow(() -> new NoSuchElementException("Task not found: " + jobId));
+        return task.getStatus();
+    }
+
+    public Task getTask(UUID jobId) {
+        return taskRepository.findById(jobId)
+                .orElseThrow(() -> new NoSuchElementException("Task not found: " + jobId));
+    }
 }
