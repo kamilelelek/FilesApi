@@ -15,7 +15,7 @@ import java.util.UUID;
 public class TaskResult {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @Column(name = "file_path", length = 1000, nullable = false)

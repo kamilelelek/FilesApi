@@ -24,12 +24,12 @@ private static final Logger log = LoggerFactory.getLogger(FileDiscoveryControlle
         this.taskService = taskService;
     }
     @PostMapping("/find-files")
-    public void createTask(@RequestBody CreateTaskCommand command) {
-        Long jobId=taskService.createTask(command);
-        ResponseEntity.ok(jobId);
+    public ResponseEntity<UUID> createTask(@RequestBody CreateTaskCommand command) {
+        UUID jobId = taskService.createTask(command);
+        return ResponseEntity.ok(jobId);
     }
     @GetMapping("/find-files/status/{jobId}")
-    public ResponseEntity<Object> getTaskStatus(@PathVariable("jobId")Long  jobId) {
+    public ResponseEntity<Object> getTaskStatus(@PathVariable("jobId") UUID jobId) {
         log.info("Staring procesing job");
         if (taskService.getTaskStatus(jobId) == TaskStatus.Running) {
             return ResponseEntity.status(400).body("Job is still running");

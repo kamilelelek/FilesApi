@@ -2,6 +2,7 @@ package org.example.filesapi.service;
 
 import org.example.filesapi.model.CreateTaskCommand;
 import org.example.filesapi.model.Task;
+import org.example.filesapi.model.TaskResult;
 import org.example.filesapi.model.TaskStatus;
 import org.example.filesapi.repository.TaskRepository;
 import org.slf4j.Logger;
@@ -27,16 +28,22 @@ public class TaskService {
         this.executorService = executorService;
     }
 
-    public Long runTask(CreateTaskCommand command) {
+    public UUID runTask(CreateTaskCommand command) {
         Task task = new Task();
         task.setStatus(TaskStatus.Running);
         Task savedTask = taskRepository.save(task);
         executorService.submit(() -> {
             try {
                 List<File> files = searchFilesWithExtension(command);
-                savedTask.setFilePaths(files.stream()
-                        .map(File::getAbsolutePath)
-                        .collect(Collectors.toList()));
+                List<TaskResult> results = files.stream()
+                        .map(file -> {
+                            TaskResult tr = new TaskResult();
+                            tr.setFilePath(file.getAbsolutePath());
+                            tr.setTask(savedTask);
+                            return tr;
+                        })
+                        .collect(Collectors.toList());
+                savedTask.setFilePaths(results);
                 savedTask.setStatus(TaskStatus.Completed);
             } catch (InterruptedException e) {
                 savedTask.setStatus(TaskStatus.Failed);
@@ -87,13 +94,13 @@ public class TaskService {
         return result;
     }
 
-    public long createTask(CreateTaskCommand command) {
-        Long jobId = runTask(command);
+    public UUID createTask(CreateTaskCommand command) {
+        UUID jobId = runTask(command);
         log.info("Job ID: " + jobId);
         return jobId;
     }
 
-    public TaskStatus getTaskStatus(Long jobId) {
+    public TaskStatus getTaskStatus(UUID jobId) {
         Task task = taskRepository.findById(jobId)
                 .orElseThrow(() -> new NoSuchElementException("Task not found: " + jobId));
         return task.getStatus();

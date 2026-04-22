@@ -22,11 +22,9 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicLong;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.lenient;
 
 @ExtendWith(MockitoExtension.class)
@@ -37,24 +35,24 @@ class TaskServiceTest {
     private TaskService taskService;
     private CreateTaskCommand command;
 
-    private final Map<UUID, Task> db = new ConcurrentHashMap<java.util.UUID, Task>();
-    private final AtomicLong idGen = new AtomicLong(0);
+    private final Map<UUID, Task> db = new ConcurrentHashMap<>();
 
     @BeforeEach
     void setUp() {
         taskService = new TaskService(taskRepository, Executors.newFixedThreadPool(4));
         command = new CreateTaskCommand();
         db.clear();
-        idGen.set(0);
 
         lenient().when(taskRepository.save(any(Task.class))).thenAnswer(inv -> {
             Task t = inv.getArgument(0);
-            if (t.getTaskId() == null);
+            if (t.getTaskId() == null) {
+                t.setTaskId(UUID.randomUUID());
+            }
             db.put(t.getTaskId(), t);
             return t;
         });
-        lenient().when(taskRepository.findById(anyLong())).thenAnswer(inv ->
-                Optional.ofNullable(db.get(inv.<Long>getArgument(0))));
+        lenient().when(taskRepository.findById(any(UUID.class))).thenAnswer(inv ->
+                Optional.ofNullable(db.get(inv.<UUID>getArgument(0))));
     }
 
     @Test
@@ -117,7 +115,7 @@ class TaskServiceTest {
         command.setSource(tempDir.toString());
         command.setExtension(".txt");
         // WHEN
-        Long taskId = service.runTask(command);
+        UUID taskId = service.runTask(command);
         // THEN
         Thread.sleep(1500);
 
@@ -133,7 +131,7 @@ class TaskServiceTest {
         command.setSource(tempDir.toString());
         command.setExtension(".txt");
         // WHEN
-        long jobId = taskService.createTask(command);
+        UUID jobId = taskService.createTask(command);
         // THEN
         TaskStatus initialStatus = taskService.getTaskStatus(jobId);
         Assertions.assertEquals(TaskStatus.Running, initialStatus);
