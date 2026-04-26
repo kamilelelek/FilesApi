@@ -1,5 +1,6 @@
 package org.example.filesapi.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,13 +17,13 @@ public class TaskResult {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    private UUID taskResultId;
 
     @Column(name = "file_path", length = 1000, nullable = false)
     private String filePath;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "task_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "task_id")
+    @JsonIgnore
     private Task task;
 }
    /*
@@ -37,5 +38,6 @@ public class TaskResult {
     2 kolumna - UUID task
 
     Relacje bazodanowe
+    obsluga wyjatkow
 
     */

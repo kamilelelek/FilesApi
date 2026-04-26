@@ -1,0 +1,180 @@
+// Visualization Script
+const template = `
+<style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; padding: 16px; color: #1f2937; }
+    .summary { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+    .card { border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px 16px; min-width: 140px; background: #f9fafb; }
+    .card .label { font-size: 12px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.04em; }
+    .card .value { font-size: 22px; font-weight: 600; margin-top: 4px; }
+    table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+    th, td { border: 1px solid #e5e7eb; padding: 8px 10px; text-align: left; font-size: 13px; }
+    th { background: #f3f4f6; }
+    .muted { color: #6b7280; font-size: 12px; }
+    .bar-wrap { margin-top: 18px; }
+    .bar-row { display: grid; grid-template-columns: 180px 1fr 60px; gap: 10px; align-items: center; margin: 8px 0; }
+    .bar-label { font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .bar-track { background: #e5e7eb; border-radius: 999px; height: 18px; overflow: hidden; }
+    .bar-fill { background: linear-gradient(90deg, #60a5fa, #2563eb); height: 100%; }
+    .bar-value { font-size: 12px; color: #374151; text-align: right; }
+    .section-title { margin-top: 20px; margin-bottom: 8px; font-size: 16px; font-weight: 600; }
+</style>
+
+<div>
+    <div class="summary">
+        <div class="card">
+            <div class="label">Total items</div>
+            <div class="value">{{totalItems}}</div>
+        </div>
+        <div class="card">
+            <div class="label">Unique extensions</div>
+            <div class="value">{{uniqueExtensions}}</div>
+        </div>
+        <div class="card">
+            <div class="label">Top directory groups</div>
+            <div class="value">{{uniqueDirectories}}</div>
+        </div>
+    </div>
+
+    <div class="section-title">Counts by file extension</div>
+    <div class="muted">Derived only from top-level items to avoid recursive or repetitive nested task data.</div>
+    <div class="bar-wrap">
+        {{#if extensionBars.length}}
+        {{#each extensionBars}}
+        <div class="bar-row">
+            <div class="bar-label">{{label}}</div>
+            <div class="bar-track"><div class="bar-fill" style="width: {{percent}}%;"></div></div>
+            <div class="bar-value">{{value}}</div>
+        </div>
+        {{/each}}
+        {{/if}}
+        {{#unless extensionBars.length}}
+        <div class="muted">No file extensions could be derived from the response.</div>
+        {{/unless}}
+    </div>
+
+    <div class="section-title">Counts by top-level directory</div>
+    <table>
+        <thead>
+        <tr><th>Directory</th><th>Count</th></tr>
+        </thead>
+        <tbody>
+        {{#if directoryRows.length}}
+        {{#each directoryRows}}
+        <tr><td>{{label}}</td><td>{{value}}</td></tr>
+        {{/each}}
+        {{/if}}
+        {{#unless directoryRows.length}}
+        <tr><td colspan="2">No directory groupings could be derived.</td></tr>
+        {{/unless}}
+        </tbody>
+    </table>
+
+    <div class="section-title">Sample top-level items</div>
+    <table>
+        <thead>
+        <tr><th>ID</th><th>File path</th><th>Extension</th><th>Directory</th></tr>
+        </thead>
+        <tbody>
+        {{#if sampleRows.length}}
+        {{#each sampleRows}}
+        <tr>
+            <td>{{id}}</td>
+            <td>{{filePath}}</td>
+            <td>{{extension}}</td>
+            <td>{{directory}}</td>
+        </tr>
+        {{/each}}
+        {{/if}}
+        {{#unless sampleRows.length}}
+        <tr><td colspan="4">No sample rows available.</td></tr>
+        {{/unless}}
+        </tbody>
+    </table>
+</div>`;
+
+function createPayload() {
+let json;
+try {
+json = pm.response.json();
+} catch (e) {
+return {
+totalItems: 0,
+uniqueExtensions: 0,
+uniqueDirectories: 0,
+extensionBars: [],
+directoryRows: [],
+sampleRows: []
+};
+}
+
+const items = Array.isArray(json)
+? json
+: (json && Array.isArray(json.items) ? json.items : []);
+
+const safeString = (value) => typeof value === 'string' ? value : '';
+
+const getFilePath = (item) => {
+if (!item || typeof item !== 'object') return '';
+return safeString(item.filePath || item.path || item.file || item.name);
+};
+
+const normalizePath = (filePath) => safeString(filePath).replace(/\\/g, '/').trim();
+
+const getExtension = (filePath) => {
+const normalized = normalizePath(filePath);
+const lastSegment = normalized.split('/').filter(Boolean).pop() || '';
+if (!lastSegment || !lastSegment.includes('.')) return '(none)';
+const ext = lastSegment.split('.').pop();
+return ext ? ext.toLowerCase() : '(none)';
+};
+
+const getDirectory = (filePath) => {
+const normalized = normalizePath(filePath);
+const parts = normalized.split('/').filter(Boolean);
+if (parts.length <= 1) return '(root)';
+return parts[0] || '(root)';
+};
+
+const countBy = (values) => {
+const map = {};
+values.forEach((value) => {
+const key = value || '(unknown)';
+map[key] = (map[key] || 0) + 1;
+});
+return Object.keys(map)
+.map((key) => ({ label: key, value: map[key] }))
+.sort((a, b) => b.value - a.value || a.label.localeCompare(b.label));
+};
+
+const topLevel = items
+.filter((item) => item && typeof item === 'object')
+.map((item) => {
+const filePath = getFilePath(item);
+return {
+id: item.id == null ? 'N/A' : String(item.id),
+filePath: filePath || 'N/A',
+extension: getExtension(filePath),
+directory: getDirectory(filePath)
+};
+});
+
+const extensionRows = countBy(topLevel.map((item) => item.extension)).slice(0, 10);
+const directoryRows = countBy(topLevel.map((item) => item.directory)).slice(0, 10);
+const maxExtensionCount = extensionRows.reduce((max, row) => Math.max(max, row.value), 0) || 1;
+const extensionBars = extensionRows.map((row) => ({
+label: row.label,
+value: row.value,
+percent: Math.round((row.value / maxExtensionCount) * 100)
+}));
+
+return {
+totalItems: topLevel.length,
+uniqueExtensions: countBy(topLevel.map((item) => item.extension)).length,
+uniqueDirectories: countBy(topLevel.map((item) => item.directory)).length,
+extensionBars,
+directoryRows,
+sampleRows: topLevel.slice(0, 12)
+};
+}
+
+pm.visualizer.set(template, createPayload());

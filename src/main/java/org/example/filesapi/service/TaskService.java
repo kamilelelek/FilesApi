@@ -74,7 +74,7 @@ public class TaskService {
         if (files.isEmpty()) {
             log.info("No files found with extension {} in directory {}", command.getExtension(), command.getSource());
         }
-        Thread.sleep(1000);
+        //Thread.sleep(1000);
         return new ArrayList<>(files);
     }
 
@@ -93,6 +93,13 @@ public class TaskService {
         }
         return result;
     }
+    public UUID searchIdForTask
+    // * global exception handler - INNY SPOSÓB NA OBSŁUGĘ WYJĄTKÓW I RESPONSE API
+    // 1. Obsługa błędnych zapytań do kontrollera - do zrobienia
+    // 1.1 W przypudku weryfikacji czy uuid istnieje zastosujemy podręczną pamięć  Cache - przy getResult sprawdzamy najpierw czy idTaks jest w cache (za[isujemy do cache przy każdym runTask) jeśli tak to zwracamy odpowiedz uuapi - TTL czas trwania obiektu w cache 5 minut
+    // 1.2 Kolejne sprawdzenia
+    // 2. Sprawdznie czy taka ścieżka na serwerze byłą juz przeszukiwana dla takiego samego typu plików jeśli tak to skipnij przesukiwanie i od razu zwróć rezulta z bazy ()
+    // 3. Test!!! W tym integracyjne Java applikacja vs Baza danych (TestContainers)
 
     public UUID createTask(CreateTaskCommand command) {
         UUID jobId = runTask(command);

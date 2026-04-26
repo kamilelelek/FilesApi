@@ -25,9 +25,7 @@ public class Task {
     private TaskStatus status;
 
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    private List<TaskResult> filePaths = new ArrayList<>();
-
-
+    private List<TaskResult> filePaths;
 
     @Override
     public boolean equals(Object o) {

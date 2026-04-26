@@ -38,6 +38,7 @@ private static final Logger log = LoggerFactory.getLogger(FileDiscoveryControlle
     }
     @GetMapping("/find-files/result/{jobId}")
     public ResponseEntity<Object> getTaskResult(@PathVariable("jobId") UUID jobId) {
+        if(jobId.) {}
         if (taskService.getTask(jobId) == null) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(taskService.getTask(jobId).getFilePaths());
     }
