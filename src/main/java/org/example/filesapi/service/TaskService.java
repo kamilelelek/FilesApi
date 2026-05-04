@@ -93,7 +93,9 @@ public class TaskService {
         }
         return result;
     }
-    public UUID searchIdForTask
+    public boolean searchIdForTask(UUID jobId){
+        return taskRepository.existsById(jobId);
+    }
     // * global exception handler - INNY SPOSÓB NA OBSŁUGĘ WYJĄTKÓW I RESPONSE API
     // 1. Obsługa błędnych zapytań do kontrollera - do zrobienia
     // 1.1 W przypudku weryfikacji czy uuid istnieje zastosujemy podręczną pamięć  Cache - przy getResult sprawdzamy najpierw czy idTaks jest w cache (za[isujemy do cache przy każdym runTask) jeśli tak to zwracamy odpowiedz uuapi - TTL czas trwania obiektu w cache 5 minut

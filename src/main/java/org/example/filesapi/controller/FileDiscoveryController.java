@@ -32,14 +32,12 @@ private static final Logger log = LoggerFactory.getLogger(FileDiscoveryControlle
     public ResponseEntity<Object> getTaskStatus(@PathVariable("jobId") UUID jobId) {
         log.info("Staring procesing job");
         if (taskService.getTaskStatus(jobId) == TaskStatus.Running) {
-            return ResponseEntity.status(400).body("Job is still running");
+            return ResponseEntity.status(200).body("Job is still running");
         }
         return ResponseEntity.ok(taskService.getTaskStatus(jobId));
     }
     @GetMapping("/find-files/result/{jobId}")
     public ResponseEntity<Object> getTaskResult(@PathVariable("jobId") UUID jobId) {
-        if(jobId.) {}
-        if (taskService.getTask(jobId) == null) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(taskService.getTask(jobId).getFilePaths());
     }
 }

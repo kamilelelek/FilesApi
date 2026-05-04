@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: filesapi-postgres
+    environment:
+      POSTGRES_DB: filesapi
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: kamil
+    ports:
+      - "5433:5432"
+    volumes:
+      - filesapi-data:/var/lib/postgresql/data
+
+volumes:
+  filesapi-data:
