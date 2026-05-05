@@ -7,6 +7,7 @@ import org.example.filesapi.model.TaskStatus;
 import org.example.filesapi.repository.TaskRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -23,9 +24,19 @@ public class TaskService {
     private final TaskRepository taskRepository;
     private final ExecutorService executorService;
 
+    @Value("${allowed.extensions}")
+    private List<String> allowedExtensions;
+
     public TaskService(TaskRepository taskRepository, ExecutorService executorService) {
         this.taskRepository = taskRepository;
         this.executorService = executorService;
+    }
+
+    private void validateExtension(String extension) {
+        String normalized = extension.startsWith(".") ? extension.toLowerCase() : "." + extension.toLowerCase();
+        if (!allowedExtensions.contains(normalized)) {
+            throw new IllegalArgumentException("Extension not allowed: " + extension);
+        }
     }
 
     public UUID runTask(CreateTaskCommand command) {
@@ -38,11 +49,12 @@ public class TaskService {
                 List<TaskResult> results = files.stream()
                         .map(file -> {
                             TaskResult tr = new TaskResult();
-                            tr.setFilePath(file.getAbsolutePath());
+                            tr.setFilePath(file.getName());
                             tr.setTask(savedTask);
                             return tr;
                         })
                         .collect(Collectors.toList());
+                savedTask.setNumberOfResults(results.size());
                 savedTask.setFilePaths(results);
                 savedTask.setStatus(TaskStatus.Completed);
             } catch (InterruptedException e) {
@@ -74,7 +86,6 @@ public class TaskService {
         if (files.isEmpty()) {
             log.info("No files found with extension {} in directory {}", command.getExtension(), command.getSource());
         }
-        //Thread.sleep(1000);
         return new ArrayList<>(files);
     }
 
@@ -93,17 +104,13 @@ public class TaskService {
         }
         return result;
     }
-    public boolean searchIdForTask(UUID jobId){
+
+    public boolean searchIdForTask(UUID jobId) {
         return taskRepository.existsById(jobId);
     }
-    // * global exception handler - INNY SPOSÓB NA OBSŁUGĘ WYJĄTKÓW I RESPONSE API
-    // 1. Obsługa błędnych zapytań do kontrollera - do zrobienia
-    // 1.1 W przypudku weryfikacji czy uuid istnieje zastosujemy podręczną pamięć  Cache - przy getResult sprawdzamy najpierw czy idTaks jest w cache (za[isujemy do cache przy każdym runTask) jeśli tak to zwracamy odpowiedz uuapi - TTL czas trwania obiektu w cache 5 minut
-    // 1.2 Kolejne sprawdzenia
-    // 2. Sprawdznie czy taka ścieżka na serwerze byłą juz przeszukiwana dla takiego samego typu plików jeśli tak to skipnij przesukiwanie i od razu zwróć rezulta z bazy ()
-    // 3. Test!!! W tym integracyjne Java applikacja vs Baza danych (TestContainers)
 
     public UUID createTask(CreateTaskCommand command) {
+        validateExtension(command.getExtension());
         UUID jobId = runTask(command);
         log.info("Job ID: " + jobId);
         return jobId;

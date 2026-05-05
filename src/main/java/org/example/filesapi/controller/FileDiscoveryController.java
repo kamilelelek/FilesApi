@@ -32,12 +32,23 @@ private static final Logger log = LoggerFactory.getLogger(FileDiscoveryControlle
     public ResponseEntity<Object> getTaskStatus(@PathVariable("jobId") UUID jobId) {
         log.info("Staring procesing job");
         if (taskService.getTaskStatus(jobId) == TaskStatus.Running) {
-            return ResponseEntity.status(200).body("Job is still running");
+            return ResponseEntity.status(204).body("Job is still running"); //task created, no content
+        }
+        if (taskService.getTaskStatus(jobId)== TaskStatus.Completed){
+            return ResponseEntity.status(200).body("Job is completed, check your result");
         }
         return ResponseEntity.ok(taskService.getTaskStatus(jobId));
     }
+
+    // przerób tak aby zwracać nie całego taksa ale DTO TYLKO z fileList i numeberOFFiles, UUID nas nie interere
+    // DTO -> powinno działać dla obu scenariuszy zarówno dla erroru jak i rezultatu poprawnego
+
     @GetMapping("/find-files/result/{jobId}")
-    public ResponseEntity<Object> getTaskResult(@PathVariable("jobId") UUID jobId) {
-        return ResponseEntity.ok(taskService.getTask(jobId).getFilePaths());
+    public ResponseEntity<?> getTaskResult(@PathVariable("jobId") UUID jobId) {
+        if (taskService.getTaskStatus(jobId) == TaskStatus.Failed) {
+            return ResponseEntity.status(404).body("Task is failed");
+        }
+        Task task = taskService.getTask(jobId);
+        return ResponseEntity.ok(task);
     }
 }

@@ -1,0 +1,289 @@
+{
+  "numberOfResults": 71,
+  "files": [
+    {
+      "filePath": "Main.java",
+      "taskResultId": "6ea69d6e-436d-4fce-8e7f-c42ce039ca72"
+    },
+    {
+      "filePath": "Event.java",
+      "taskResultId": "b3a8d3f1-7023-4076-a800-16f5edf0c291"
+    },
+    {
+      "filePath": "EventType.java",
+      "taskResultId": "9e647807-edb0-4547-adad-bb349e8d8b62"
+    },
+    {
+      "filePath": "Main.java",
+      "taskResultId": "e9c0a604-15a1-4422-9976-af9d39170605"
+    },
+    {
+      "filePath": "Account.java",
+      "taskResultId": "f1c72b59-360a-46aa-8d32-d3a83680eaf0"
+    },
+    {
+      "filePath": "User.java",
+      "taskResultId": "07717946-9e00-4860-8abc-c5d9c3489e61"
+    },
+    {
+      "filePath": "UserDatabase.java",
+      "taskResultId": "553dd6db-c833-4357-a8da-cd57becd72cd"
+    },
+    {
+      "filePath": "UserService.java",
+      "taskResultId": "e66acb2a-16f2-4f79-be40-f94246e83806"
+    },
+    {
+      "filePath": "DemoApplication.java",
+      "taskResultId": "6d5c8a8b-dd8d-4076-a4d7-2a5ae3eaa8a0"
+    },
+    {
+      "filePath": "DemoApplicationTests.java",
+      "taskResultId": "26b40868-43da-4459-b78d-d3e9e1d44d76"
+    },
+    {
+      "filePath": "DemoApiApplication.java",
+      "taskResultId": "ebea663a-36c7-43ca-a355-5a35fbe249ce"
+    },
+    {
+      "filePath": "HelloController.java",
+      "taskResultId": "ca52b2e4-800a-4811-ab11-7dde454a1c96"
+    },
+    {
+      "filePath": "DemoApiApplicationTests.java",
+      "taskResultId": "cfa4faef-ab6c-4365-9368-68892a2ec1b7"
+    },
+    {
+      "filePath": "ExecutorConfig.java",
+      "taskResultId": "44c9bffe-e02f-4164-bae0-3529d9cfd6c4"
+    },
+    {
+      "filePath": "FileDiscoveryController.java",
+      "taskResultId": "c7de590b-8ed6-4e57-91e9-347c14569096"
+    },
+    {
+      "filePath": "FilesApiApplication.java",
+      "taskResultId": "70f6e2be-a81f-490c-9f27-59a034393e5a"
+    },
+    {
+      "filePath": "CreateTaskCommand.java",
+      "taskResultId": "fc4f2379-1cf9-43a8-b8a7-21f6d21c89c3"
+    },
+    {
+      "filePath": "Task.java",
+      "taskResultId": "ae47f563-e0cc-4a57-9ba2-ef6ff7ebe5b7"
+    },
+    {
+      "filePath": "TaskStatus.java",
+      "taskResultId": "c87423b3-25f5-43d1-a682-78b14084b286"
+    },
+    {
+      "filePath": "TaskRepository.java",
+      "taskResultId": "66064b49-7d46-4ac8-a86d-71938b2041c5"
+    },
+    {
+      "filePath": "TaskService.java",
+      "taskResultId": "7560e3be-0993-4436-821b-8f54ecf3dbf1"
+    },
+    {
+      "filePath": "TaskServiceTest.java",
+      "taskResultId": "d6c08ff4-1ce6-4af3-af60-43690fe00bc9"
+    },
+    {
+      "filePath": "ExecutorConfig.java",
+      "taskResultId": "e5743465-657c-4df0-8f90-49d58a12534d"
+    },
+    {
+      "filePath": "FileDiscoveryController.java",
+      "taskResultId": "a445d685-e9c4-4e06-b037-90578347f61c"
+    },
+    {
+      "filePath": "GlobalExceptionHandler.java",
+      "taskResultId": "a10632a6-6f76-48c5-8a61-b21218ad6532"
+    },
+    {
+      "filePath": "FilesApiApplication.java",
+      "taskResultId": "823ef4a5-fd0c-498d-86d7-52c60d68d623"
+    },
+    {
+      "filePath": "CreateTaskCommand.java",
+      "taskResultId": "31c92552-5928-46fb-ad97-42b3669b9e59"
+    },
+    {
+      "filePath": "Task.java",
+      "taskResultId": "9a7a452b-9f23-4b22-9256-9abc245ff9fd"
+    },
+    {
+      "filePath": "TaskResult.java",
+      "taskResultId": "cf59ee68-6def-4be0-bd31-869854b8ef0f"
+    },
+    {
+      "filePath": "TaskStatus.java",
+      "taskResultId": "65ce3a42-2b62-4a24-83f2-5c804d79a322"
+    },
+    {
+      "filePath": "TaskRepository.java",
+      "taskResultId": "483a30ec-8f6d-44f2-84d4-5b9bc6acba47"
+    },
+    {
+      "filePath": "TaskService.java",
+      "taskResultId": "683af5b1-8901-4a1b-b66b-d1c686452d56"
+    },
+    {
+      "filePath": "FileDiscoveryControllerTest.java",
+      "taskResultId": "bcaf8898-3a63-4e98-a205-99d90601d861"
+    },
+    {
+      "filePath": "TaskRepositoryIntegrationTest.java",
+      "taskResultId": "295474d2-29bb-4aec-a5a3-485412cac896"
+    },
+    {
+      "filePath": "TaskServiceTest.java",
+      "taskResultId": "57d0be91-e705-429f-9d26-d373f18d76f7"
+    },
+    {
+      "filePath": "LeadReaderApplication.java",
+      "taskResultId": "4f244635-4ee8-40fe-9f53-48cf69cc24ab"
+    },
+    {
+      "filePath": "Main.java",
+      "taskResultId": "2f6e8028-39fd-4931-a98e-2daa66ffc3a1"
+    },
+    {
+      "filePath": "VisionService.java",
+      "taskResultId": "0dfb1ce8-4e37-4170-9b17-baf093bebd6d"
+    },
+    {
+      "filePath": "LeadReaderApplicationTests.java",
+      "taskResultId": "f26e2dd2-ef15-4fe3-a440-c7f56659b4d5"
+    },
+    {
+      "filePath": "Main.java",
+      "taskResultId": "b9e2d5c6-d512-4d09-b176-45919a9b52f2"
+    },
+    {
+      "filePath": "Maze.java",
+      "taskResultId": "c483d670-692f-4d8b-b811-306fb2c2dbf0"
+    },
+    {
+      "filePath": "Move.java",
+      "taskResultId": "3f91767c-c667-464d-a2ac-88757270cf3f"
+    },
+    {
+      "filePath": "MeetingServiceApplication.java",
+      "taskResultId": "6f524ca2-ef64-4762-b7d9-ba5cbe9e1197"
+    },
+    {
+      "filePath": "Calendar.java",
+      "taskResultId": "91129b73-ac05-4e40-9011-12c8cd597fcd"
+    },
+    {
+      "filePath": "MeetingService.java",
+      "taskResultId": "c184aedd-278d-4a26-9c8b-37d85cccd119"
+    },
+    {
+      "filePath": "MeetingServiceApplicationTests.java",
+      "taskResultId": "9395c6d6-2b4e-46ee-8cbe-bd66c86a2c33"
+    },
+    {
+      "filePath": "Main.java",
+      "taskResultId": "3b0f4197-f85c-4530-b0f3-23ee5115f238"
+    },
+    {
+      "filePath": "BigRoom.java",
+      "taskResultId": "235a004a-f390-4316-9496-159d22240daa"
+    },
+    {
+      "filePath": "Member.java",
+      "taskResultId": "97ab5039-3fbc-42e5-b641-a73fb4d6b29d"
+    },
+    {
+      "filePath": "Room.java",
+      "taskResultId": "472ac740-e535-46d2-8efc-666570c77710"
+    },
+    {
+      "filePath": "SmallRoom.java",
+      "taskResultId": "5d92f8c5-5ba7-4f46-8c45-6f2e1f9790c7"
+    },
+    {
+      "filePath": "GetConnectionsService.java",
+      "taskResultId": "ff665966-3f24-479e-b980-22937aace892"
+    },
+    {
+      "filePath": "KnownPeopleService.java",
+      "taskResultId": "652525d4-5a96-4e8b-9673-98f912e54a78"
+    },
+    {
+      "filePath": "SuperStarService.java",
+      "taskResultId": "fe7e3da2-b3f9-42fc-8339-cfe07c846772"
+    },
+    {
+      "filePath": "GetConnectionsServiceTest.java",
+      "taskResultId": "6e27c6e7-5a67-4f5f-835f-529068c862c9"
+    },
+    {
+      "filePath": "KnownPeopleServiceTest.java",
+      "taskResultId": "beac500e-f9f1-4ee9-a8d9-10aeb8e1c832"
+    },
+    {
+      "filePath": "SuperStarServiceTest.java",
+      "taskResultId": "024dbe94-6e92-4eb9-a615-59a0f93a5b0c"
+    },
+    {
+      "filePath": "SuperStartServiceTest.java",
+      "taskResultId": "190e5a23-acd8-4719-9247-2def613cbf44"
+    },
+    {
+      "filePath": "ArrayUtils.java",
+      "taskResultId": "150c176f-0305-41ae-a79c-6635a78757d1"
+    },
+    {
+      "filePath": "Main.java",
+      "taskResultId": "36eda3f3-53dc-4145-a5f1-3744084f8179"
+    },
+    {
+      "filePath": "ParallelSumCalculator.java",
+      "taskResultId": "5c4db31f-adaa-4f8f-84a1-3fb5297d01df"
+    },
+    {
+      "filePath": "SumTask.java",
+      "taskResultId": "b2551dc8-6edf-4722-9c07-215e447ea9b5"
+    },
+    {
+      "filePath": "ThreadExample.java",
+      "taskResultId": "0b20bf42-41da-48ca-a7c5-92f94f861253"
+    },
+    {
+      "filePath": "ArrayUtilsTest.java",
+      "taskResultId": "0c056f31-95cc-44c2-ae2c-a0b2bf60500b"
+    },
+    {
+      "filePath": "ParallelSumCalculatorTest.java",
+      "taskResultId": "7036068b-b5b5-4b17-ac15-9513f25df25f"
+    },
+    {
+      "filePath": "VideoCassetteController.java",
+      "taskResultId": "58149990-1332-4561-bd31-6bdb09c8f8c3"
+    },
+    {
+      "filePath": "VideoCassette.java",
+      "taskResultId": "df8610c9-94c5-4680-885e-1c9a800888ed"
+    },
+    {
+      "filePath": "VideoCassetteRepo.java",
+      "taskResultId": "e24b7f7d-e6d6-4caf-bcbb-cd406a8d9aa7"
+    },
+    {
+      "filePath": "VideoCassetteService.java",
+      "taskResultId": "3a0bd5ec-6d11-4ab9-80ca-b0a205099617"
+    },
+    {
+      "filePath": "VideoLibraryApplication.java",
+      "taskResultId": "2549c26f-ff11-48a4-997a-d7e7358c3d9e"
+    },
+    {
+      "filePath": "VideoLibraryApplicationTests.java",
+      "taskResultId": "873a236a-1768-47b3-8550-39b7de70c1f9"
+    }
+  ]
+}

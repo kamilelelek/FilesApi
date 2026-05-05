@@ -14,3 +14,8 @@ responose -> taksId (wygeneruj UUID)
     dwie tabele w postgresie
     testy integracyjne zobaczyc
     
+
+Zrobic prostą stronę logowania:
+- maven dependency spring-security
+- bedziemy implmentowac authentykacje do seriwsu i autoryzacje do konkretnych ednpointow
+  - 

@@ -26,7 +26,8 @@ public class Task {
 
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<TaskResult> filePaths;
-
+    @Transient
+    private int numberOfResults;
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;

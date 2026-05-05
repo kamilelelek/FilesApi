@@ -10,6 +10,11 @@ services:
       - "5433:5432"
     volumes:
       - filesapi-data:/var/lib/postgresql/data
+  #filesApi:
+    #image: użyj z Dockerfile
 
 volumes:
   filesapi-data:
+
+networks: # aby postgres i filesApi wewnątrz podu ze soba rozmawialy
+
