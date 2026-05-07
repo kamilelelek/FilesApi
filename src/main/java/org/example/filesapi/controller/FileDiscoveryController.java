@@ -2,6 +2,7 @@ package org.example.filesapi.controller;
 
 import org.example.filesapi.model.CreateTaskCommand;
 import org.example.filesapi.model.Task;
+import org.example.filesapi.model.TaskDTO;
 import org.example.filesapi.model.TaskStatus;
 import org.example.filesapi.service.TaskService;
 import org.slf4j.Logger;
@@ -48,7 +49,7 @@ private static final Logger log = LoggerFactory.getLogger(FileDiscoveryControlle
         if (taskService.getTaskStatus(jobId) == TaskStatus.Failed) {
             return ResponseEntity.status(404).body("Task is failed");
         }
-        Task task = taskService.getTask(jobId);
+        TaskDTO task = TaskDTO.from(taskService.getTask(jobId));
         return ResponseEntity.ok(task);
     }
 }

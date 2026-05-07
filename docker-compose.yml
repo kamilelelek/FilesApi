@@ -10,8 +10,19 @@ services:
       - "5433:5432"
     volumes:
       - filesapi-data:/var/lib/postgresql/data
-  #filesApi:
-    #image: użyj z Dockerfile
+  filesapi:
+    build: .                       # zbuduj obraz z Dockerfile w tym samym folderze
+    container_name: filesapi-app
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/filesapi
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: kamil
+    depends_on:
+      - postgres                   # uruchom postgres PRZED aplikacją
+    networks:
+      - filesapi-network
 
 volumes:
   filesapi-data:
